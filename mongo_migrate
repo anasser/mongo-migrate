@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ### BEGIN INFO
 # Provides:          Mongodb migration manager
@@ -30,7 +30,7 @@ ensure_installed() {
 ensure_migration_dir() {
     if [ ! -d $MIGRATION_DIR ]
     then
-        echo "Migration dir does not exist: $MIGRATION_DIR\n"
+        echo "Migration dir does not exist: $MIGRATION_DIR"
         exit 1
     fi
 }
@@ -38,7 +38,7 @@ ensure_migration_dir() {
 ensure_database() {
     if [ -z $MONGO_DATABASE ]; then
         echo "MONGO_DATABASE not defined"
-        echo "Define it at config.cfg\n"
+        echo "Define it at config.cfg"
         exit 1
     fi
 }
@@ -63,12 +63,12 @@ check_migration() {
     if [ ! $total_files = '1' ]; then 
         echo "You have 2 files, please use the full file name"
         echo "Files:"
-        echo "$file\n"
+        echo "$file"
         exit 1
     fi
 
     if [ ! -f $file ]; then
-        echo "Migration not found at $MIGRATION_DIR\n"
+        echo "Migration not found at $MIGRATION_DIR"
         exit 1
     fi
 }
@@ -84,7 +84,7 @@ run_migration() {
     local name=$1
     local target=$2
 
-    echo "running migration ${name} ${target}\n"
+    echo "running migration ${name} ${target}"
     ensure_installed mongo
     ensure_database
 
@@ -97,7 +97,7 @@ run_migration() {
     mongo $MONGO_HOST/$MONGO_DATABASE $auth --eval "target='${target}'" $file
     if [ $? -ne 0 ];
     then
-        echo "\nerror executing migration.\n"
+        echo "error executing migration."
         exit 1
     fi
 
@@ -105,9 +105,10 @@ run_migration() {
     local migration_name="$(echo $file |awk -F/ '{print $NF}')"
     local migration_time="$(echo $migration_name |cut -d_ -f1 |bc)"
 
+
     update_current_migration `echo "$migration_time$inc"|bc`
 
-    echo "Migration ${name} ${target} executed\n"
+    echo "Migration ${name} ${target} executed"
 }
 
 get_current_migration() {
@@ -193,6 +194,7 @@ MIGRATION_DIR=${MIGRATION_DIR%/}/
 
 #Check migration dir
 ensure_migration_dir
+
 #Construct authentication phrase
 auth=""
 if [ $MONGO_USR ]; then
@@ -202,6 +204,7 @@ fi
 if [ $MONGO_PWD ]; then
 	auth="$auth -p $MONGO_PWD "
 fi
+
 
 # Script running flow
 if [ $GENERATE ]; then
@@ -217,4 +220,7 @@ else
 fi
 
 exit 0
+
+
+
 
